@@ -4,8 +4,6 @@ import { connectDB } from "./config/dbconfig";
 
 const app = express();
 connectDB();
-app.use(express.json());
-
-app.use()
+app.use(express.json())
 
 export default app;

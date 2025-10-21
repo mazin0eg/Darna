@@ -1,7 +1,6 @@
 import "dotenv/config";
 import mongoose from "mongoose";
-const MONGODB_PATH = process.env.MONGO_PATH || "mongodb://localhost:1332/darnadb"
-
+const MONGODB_PATH = `${process.env.MONGO_PATH}`;
 
 export const connectDB = async () => {
   try {
@@ -11,4 +10,3 @@ export const connectDB = async () => {
     console.error("Database connection error:", err);
   }
 };
-

@@ -9,8 +9,8 @@ import PasswordReset from "../models/PasswordReset";
 import User from "../models/User";
 import { generateToken } from "../utils/jwt";
 
-class AuthController {;
-  static sanitizeUserData = (userData) => {
+class AuthController {
+  static sanitizeUserData = (userData: any) => {
     const userResponse = { ...userData.toObject() };
     delete userResponse.password;
     return userResponse;
@@ -189,7 +189,7 @@ class AuthController {;
         return res.error("Email ou mot de passe invalide", 401);
       }
       const userData = {
-        userId: user._id,
+        userId: user._id.toString(),
         email: user.email,
         role: user.role,
       };
@@ -230,7 +230,7 @@ class AuthController {;
       }
       await EmailValidation.deleteOne({ token });
       const userData = {
-        userId: user._id,
+        userId: user._id.toString(),
         email: user.email,
         role: user.role,
       };
@@ -305,7 +305,7 @@ class AuthController {;
       }
       await PasswordReset.deleteOne({ token });
       const userData = {
-        userId: user._id,
+        userId: user._id.toString(),
         email: user.email,
         role: user.role,
       };

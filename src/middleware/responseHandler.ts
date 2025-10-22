@@ -4,7 +4,7 @@ declare global {
   namespace Express {
     interface Response {
       success: (
-        data?: Record<string, unknown>,
+        data?: string | object | null,
         message?: string,
         status?: number
       ) => Response;
@@ -19,7 +19,7 @@ export const responseHandler = (
   next: NextFunction
 ) => {
   res.success = (
-    data: unknown = {},
+    data: string | object | null = {},
     message: string = "Success",
     status: number = 200
   ) => {

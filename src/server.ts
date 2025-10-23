@@ -3,6 +3,7 @@ import app from "./app";
 import http from "http";
 import { Server, Socket } from "socket.io";
 import chatSocket from "./socket/chat.socket";
+import { extractTokenFromHeader, verifyToken } from "./utils/jwt";
 
 const port: number = 3000;
 const server = http.createServer(app);
@@ -19,11 +20,12 @@ const io = new Server(server, {
 export const context : Record<string, Socket> = {};
 
 io.on("connection", (socket ) => {
-  const data = socket.handshake.headers['authorization'];
-  if(!data?.split(' ')[1]) return socket.disconnect();
-  context[data?.split(' ')[1]] =  socket;
+  const token = extractTokenFromHeader(socket.handshake.headers['authorization'])
+  const currentUserId = verifyToken(token).userId;
+  if(!currentUserId) return socket.disconnect();
+  context[currentUserId] =  socket;
   console.log(`User connected: ${socket.id}`);
-  chatSocket(io, socket, data?.split(' ')[1]);
+  chatSocket(io, socket, currentUserId);
 
   socket.on("disconnect", () => {
     console.log(` User disconnected: ${socket.id}`);

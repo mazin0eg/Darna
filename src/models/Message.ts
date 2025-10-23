@@ -5,7 +5,7 @@ const {Schema} = mongoose;
 const messageSchema = new Schema(
     {
         senderID:{type : mongoose.Schema.Types.ObjectId , ref : "User" , require: true},
-        reciverID:{type : mongoose.Schema.Types.ObjectId , ref : "User" , require: true},
+        receiverId:{type : mongoose.Schema.Types.ObjectId , ref : "User" , require: true},
         content : {type : String , require : true },
         read :{type : Boolean , default : false}
     },

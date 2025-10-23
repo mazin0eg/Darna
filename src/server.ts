@@ -23,7 +23,7 @@ io.on("connection", (socket ) => {
   if(!data?.split(' ')[1]) return socket.disconnect();
   context[data?.split(' ')[1]] =  socket;
   console.log(`User connected: ${socket.id}`);
-  chatSocket(io, socket);
+  chatSocket(io, socket, data?.split(' ')[1]);
 
   socket.on("disconnect", () => {
     console.log(` User disconnected: ${socket.id}`);

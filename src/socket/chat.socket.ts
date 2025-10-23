@@ -2,13 +2,12 @@ import { Server , Socket } from "socket.io";
 import Chatservice from "../services/chat"
 import { context } from "../server";
 
-export default (io: Server , socket:Socket) =>{
-    console.log("a user is connected " , socket.id);
+export default (io: Server , socket:Socket, currentUser: string) =>{
+    console.log("a user is connected " , currentUser);
 
-    socket.on("sendMEssage" , async(data : {reciverId : string ; senderId:  string ; content  : string }) => {
-        const message = await Chatservice.sendMessage(data.reciverId, data.senderId, data.content )
-
-        context?.[data.reciverId].emit("new-message" , message);
+    socket.on("send-message" , async(data : {receiverId : string ; content  : string }) => {
+        const message = await Chatservice.sendMessage(data.receiverId, currentUser, data.content )
+        context?.[data.receiverId].emit("new-message" , message);
 
     });
 

@@ -2,8 +2,8 @@ import Message from "../models/Message";
 
 
 class Chatservice{
-    async sendMessage(senderID : string , reciverID : string, content: string){
-        const message =  new Message({senderID , reciverID , content})
+    async sendMessage(senderID : string , receiverId : string, content: string){
+        const message =  new Message({senderID , receiverId , content})
         await message.save();
         return message;
     }

@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 const { Schema } = mongoose;
 
-const userSchema: mongoose.Schema = new Schema(
+const userSchema = new Schema(
   {
     username: {
       type: String,
@@ -33,7 +33,7 @@ const userSchema: mongoose.Schema = new Schema(
     },
     role: {
       type: String,
-      enum: ["particulier", "admin"],
+      enum: ["particulier", "admin", "employé"],
       default: "particulier",
     },
     isActive: {
@@ -43,11 +43,6 @@ const userSchema: mongoose.Schema = new Schema(
     email_verified: {
       type: Boolean,
       default: false,
-    },
-    kyc_status: {
-      type: String,
-      enum: ["pending", "in_review", "approved", "rejected"],
-      default: "pending",
     },
     last_login_at: {
       type: Date,

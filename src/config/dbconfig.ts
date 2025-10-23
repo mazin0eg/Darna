@@ -1,7 +1,6 @@
 import "dotenv/config";
 import mongoose from "mongoose";
-const MONGODB_PATH =
-  process.env.MONGO_PATH || "mongodb://127.0.0.1:27017/";
+const MONGODB_PATH = process.env.MONGO_PATH || "mongodb://127.0.0.1:27017/";
 
 export const connectDB = async () => {
   try {

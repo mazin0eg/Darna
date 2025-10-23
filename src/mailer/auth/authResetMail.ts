@@ -1,6 +1,6 @@
 import crypto from "crypto";
-import PasswordReset from "../../models/PasswordReset.js";
-import mailSender from "../mailSender.js";
+import PasswordReset from "../../models/PasswordReset";
+import mailSender from "../mailSender";
 
 export const passwordResetMail = async (to: string) => {
   const mailValidationToken = crypto.randomBytes(32).toString("hex");

@@ -1,6 +1,6 @@
 import crypto from "crypto";
-import MailValidation from "../../models/EmailValidation.js";
-import mailSender from "../mailSender.js";
+import MailValidation from "../../models/EmailValidation";
+import mailSender from "../mailSender";
 
 export const validateMail = async (to: string) => {
   const mailValidationToken = crypto.randomBytes(32).toString("hex");

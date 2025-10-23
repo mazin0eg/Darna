@@ -2,7 +2,6 @@
 import type { Request, Response } from "express";
 
 import bcryptjs from "bcryptjs";
-import { body, validationResult } from "express-validator";
 import { passwordResetMail } from "../mailer/auth/authResetMail";
 import { validateMail } from "../mailer/auth/authValidateMail";
 import EmailValidation from "../models/EmailValidation";
@@ -31,87 +30,8 @@ class AuthController {
     }
   };
 
-  static registerValidateur = [
-    body("firstName")
-      .exists()
-      .withMessage("Le champ prénom est requis")
-      .trim()
-      .isLength({ min: 2, max: 20 })
-      .withMessage("Le prénom doit contenir entre 2 et 20 caractères"),
-
-    body("lastName")
-      .exists()
-      .withMessage("Le champ nom est requis")
-      .trim()
-      .isLength({ min: 2, max: 20 })
-      .withMessage("Le nom doit contenir entre 2 et 20 caractères"),
-
-    body("email")
-      .exists()
-      .withMessage("Le champ email est requis")
-      .isEmail()
-      .normalizeEmail()
-      .withMessage("Veuillez fournir un email valide"),
-
-    body("password")
-      .exists()
-      .withMessage("Le champ mot de passe est requis")
-      .isLength({ min: 6 })
-      .withMessage("Le mot de passe doit contenir au moins 6 caractères"),
-
-    body("confirmPassword")
-      .exists()
-      .withMessage("La confirmation du mot de passe est requise"),
-  ];
-
-  static loginValidateur = [
-    body("email")
-      .exists()
-      .withMessage("Le champ email est requis")
-      .isEmail()
-      .normalizeEmail()
-      .withMessage("Veuillez fournir un email valide"),
-
-    body("password")
-      .exists()
-      .withMessage("Le champ mot de passe est requis")
-      .isLength({ min: 6 })
-      .withMessage("Le mot de passe doit contenir au moins 6 caractères"),
-  ];
-
-  static emailValidateur = [
-    body("email")
-      .exists()
-      .withMessage("Le champ email est requis")
-      .isEmail()
-      .normalizeEmail()
-      .withMessage("Veuillez fournir un email valide"),
-  ];
-
-  static resetValidateur = [
-    body("password")
-      .exists()
-      .withMessage("Le champ mot de passe est requis")
-      .isLength({ min: 6 })
-      .withMessage("Le mot de passe doit contenir au moins 6 caractères"),
-
-    body("confirmPassword")
-      .exists()
-      .withMessage("La confirmation du mot de passe est requise"),
-
-    body("token").exists().withMessage("Le token est requis"),
-  ];
-
-  static tokenValidateur = [
-    body("token").exists().withMessage("Le token est requis"),
-  ];
-
   static async register(req: Request, res: Response) {
     try {
-      const errors = validationResult(req);
-      if (!errors.isEmpty()) {
-        return res.error(errors.array()[0].msg, 400);
-      }
       const { email, password, confirmPassword, firstName, lastName } =
         req.body;
       if (password !== confirmPassword) {
@@ -169,10 +89,6 @@ class AuthController {
 
   static async login(req: Request, res: Response) {
     try {
-      const errors = validationResult(req);
-      if (!errors.isEmpty()) {
-        return res.error(errors.array()[0].msg, 400);
-      }
       const { email, password } = req.body;
       const user = await User.findOne({ email });
       if (!user) {
@@ -208,10 +124,6 @@ class AuthController {
 
   static async validate(req: Request, res: Response) {
     try {
-      const errors = validationResult(req);
-      if (!errors.isEmpty()) {
-        return res.error(errors.array()[0].msg, 400);
-      }
       const { token } = req.body;
       const email = AuthController.decryptEmailFromToken(token);
       const tokenData = await EmailValidation.findOne({ token });
@@ -249,10 +161,6 @@ class AuthController {
 
   static async validateMessage(req: Request, res: Response) {
     try {
-      const errors = validationResult(req);
-      if (!errors.isEmpty()) {
-        return res.error(errors.array()[0].msg, 400);
-      }
       const { email } = req.body;
       const user = await User.findOne({ email });
       if (!user) {
@@ -279,10 +187,6 @@ class AuthController {
 
   static async reset(req: Request, res: Response) {
     try {
-      const errors = validationResult(req);
-      if (!errors.isEmpty()) {
-        return res.error(errors.array()[0].msg, 400);
-      }
       const { password, confirmPassword, token } = req.body;
       if (password !== confirmPassword) {
         return res.error("Les mots de passe ne correspondent pas", 400);
@@ -324,10 +228,6 @@ class AuthController {
 
   static async resetMessage(req: Request, res: Response) {
     try {
-      const errors = validationResult(req);
-      if (!errors.isEmpty()) {
-        return res.error(errors.array()[0].msg, 400);
-      }
       const { email } = req.body;
       const user = await User.findOne({ email });
       if (!user) {

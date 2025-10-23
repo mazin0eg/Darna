@@ -4,7 +4,7 @@ import http from "http";
 import { Server, Socket } from "socket.io";
 import chatSocket from "./socket/chat.socket";
 
-const port: number = 4000;
+const port: number = 3000;
 const server = http.createServer(app);
 
 

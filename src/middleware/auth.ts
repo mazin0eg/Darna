@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
-import User from "../models/User";
-import { extractTokenFromHeader, verifyToken } from "../utils/jwt";
+import User from "../models/User.js";
+import { extractTokenFromHeader, verifyToken } from "../utils/jwt.js";
 
 declare global {
   namespace Express {

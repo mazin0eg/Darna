@@ -1,5 +1,32 @@
 import { body } from "express-validator";
 
+export const tokenValidateur = [
+  body("token").exists().withMessage("Le token est requis"),
+];
+
+export const passwordValidateur = [
+  body("password")
+    .exists()
+    .withMessage("Le champ mot de passe est requis")
+    .isLength({ min: 6 })
+    .withMessage("Le mot de passe doit contenir au moins 6 caractères"),
+];
+
+export const confirmPasswordlidateur = [
+  body("confirmPassword")
+    .exists()
+    .withMessage("La confirmation du mot de passe est requise"),
+];
+
+export const emailValidateur = [
+  body("email")
+    .exists()
+    .withMessage("Le champ email est requis")
+    .isEmail()
+    .normalizeEmail()
+    .withMessage("Veuillez fournir un email valide"),
+];
+
 export const registerValidateur = [
   body("firstName")
     .exists()
@@ -15,62 +42,15 @@ export const registerValidateur = [
     .isLength({ min: 2, max: 20 })
     .withMessage("Le nom doit contenir entre 2 et 20 caractères"),
 
-  body("email")
-    .exists()
-    .withMessage("Le champ email est requis")
-    .isEmail()
-    .normalizeEmail()
-    .withMessage("Veuillez fournir un email valide"),
-
-  body("password")
-    .exists()
-    .withMessage("Le champ mot de passe est requis")
-    .isLength({ min: 6 })
-    .withMessage("Le mot de passe doit contenir au moins 6 caractères"),
-
-  body("confirmPassword")
-    .exists()
-    .withMessage("La confirmation du mot de passe est requise"),
+  emailValidateur,
+  passwordValidateur,
+  confirmPasswordlidateur,
 ];
 
-export const loginValidateur = [
-  body("email")
-    .exists()
-    .withMessage("Le champ email est requis")
-    .isEmail()
-    .normalizeEmail()
-    .withMessage("Veuillez fournir un email valide"),
-
-  body("password")
-    .exists()
-    .withMessage("Le champ mot de passe est requis")
-    .isLength({ min: 6 })
-    .withMessage("Le mot de passe doit contenir au moins 6 caractères"),
-];
-
-export const emailValidateur = [
-  body("email")
-    .exists()
-    .withMessage("Le champ email est requis")
-    .isEmail()
-    .normalizeEmail()
-    .withMessage("Veuillez fournir un email valide"),
-];
+export const loginValidateur = [passwordValidateur, passwordValidateur];
 
 export const resetValidateur = [
-  body("password")
-    .exists()
-    .withMessage("Le champ mot de passe est requis")
-    .isLength({ min: 6 })
-    .withMessage("Le mot de passe doit contenir au moins 6 caractères"),
-
-  body("confirmPassword")
-    .exists()
-    .withMessage("La confirmation du mot de passe est requise"),
-
-  body("token").exists().withMessage("Le token est requis"),
-];
-
-export const tokenValidateur = [
-  body("token").exists().withMessage("Le token est requis"),
+  passwordValidateur,
+  confirmPasswordlidateur,
+  tokenValidateur,
 ];

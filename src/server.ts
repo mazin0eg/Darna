@@ -20,16 +20,26 @@ const io = new Server(server, {
 export const context : Record<string, Socket> = {};
 
 io.on("connection", (socket ) => {
-  const token = extractTokenFromHeader(socket.handshake.headers['authorization'])
-  const currentUserId = verifyToken(token).userId;
-  if(!currentUserId) return socket.disconnect();
-  context[currentUserId] =  socket;
-  console.log(`User connected: ${socket.id}`);
-  chatSocket(io, socket, currentUserId);
+  try {
+    const token = extractTokenFromHeader(socket.handshake.headers['authorization'])
+    const currentUserId = verifyToken(token).userId;
+    if(!currentUserId) return socket.disconnect();
+    context[currentUserId] =  socket;
+    console.log(`User connected: ${socket.id}`);
+    chatSocket(io, socket, currentUserId);
 
-  socket.on("disconnect", () => {
-    console.log(` User disconnected: ${socket.id}`);
-  });
+    socket.on("disconnect", () => {
+      try {
+        delete context[currentUserId];
+        console.log(` User disconnected: ${socket.id}`);
+      } catch (error) {
+        console.error(`Error during disconnect: ${error}`);
+      }
+    });
+  } catch (error) {
+    console.error(`Connection error: ${error}`);
+    socket.disconnect();
+  }
 });
 
 

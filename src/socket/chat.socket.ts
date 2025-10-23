@@ -6,17 +6,32 @@ export default (io: Server , socket:Socket, currentUser: string) =>{
     console.log("a user is connected " , currentUser);
 
     socket.on("send-message" , async(data : {receiverId : string ; content  : string }) => {
-        const message = await Chatservice.sendMessage(data.receiverId, currentUser, data.content )
-        context?.[data.receiverId].emit("new-message" , message);
-
+        try {
+            const message = await Chatservice.sendMessage(data.receiverId, currentUser, data.content )
+            if(context?.[data.receiverId]) {
+                context[data.receiverId].emit("new-message" , message);
+            }
+        } catch (error) {
+            console.error(`Error sending message: ${error}`);
+            socket.emit("error", { message: "Failed to send message" });
+        }
     });
 
     socket.on("joinRoom" , (userId: string) =>{
-        socket.join(userId);
-        console.log(`user ${userId} joined the room `);
+        try {
+            socket.join(userId);
+            console.log(`user ${userId} joined the room `);
+        } catch (error) {
+            console.error(`Error joining room: ${error}`);
+            socket.emit("error", { message: "Failed to join room" });
+        }
     });
 
     socket.on("disconnect" , ()=>{
-        console.log(`user disconnected :`,socket.id)
+        try {
+            console.log(`user disconnected :`,socket.id)
+        } catch (error) {
+            console.error(`Error during disconnect: ${error}`);
+        }
     })
 }

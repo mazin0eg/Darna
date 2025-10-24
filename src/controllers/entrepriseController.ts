@@ -5,29 +5,25 @@ import Entreprise from "../models/Entreprise";
 class EntrepriseController {
   static createValidators = [
     body("name")
-        .exists()
-        .withMessage("Le nom est requis")
-        .isLength({ min: 2 })
-        .withMessage("Le nom est trop court"),
+      .exists()
+      .withMessage("Le nom est requis")
+      .isLength({ min: 2 })
+      .withMessage("Le nom est trop court"),
 
     body("description")
-        .optional()
-        .isLength({ max: 500 })
-        .withMessage("La description est trop longue"),
+      .optional()
+      .isLength({ max: 500 })
+      .withMessage("La description est trop longue"),
 
     body("phone")
-        .optional()
-        .isMobilePhone("any")
-        .withMessage("Numéro de téléphone invalide"),
+      .optional()
+      .isMobilePhone("any")
+      .withMessage("Numéro de téléphone invalide"),
 
-    body("address")
-        .optional()
-        .isString()
-        .withMessage("Adresse invalide"),
+    body("address").optional().isString().withMessage("Adresse invalide"),
   ];
 
   static updateValidators = [
-    
     body("name")
       .optional()
       .isLength({ min: 2 })
@@ -43,10 +39,7 @@ class EntrepriseController {
       .isString()
       .withMessage("Numéro de téléphone invalide"),
 
-    body("address")
-      .optional()
-      .isString()
-      .withMessage("Adresse invalide"),
+    body("address").optional().isString().withMessage("Adresse invalide"),
   ];
 
   static async create(req: Request, res: Response) {
@@ -79,23 +72,19 @@ class EntrepriseController {
   }
 
   static async update(req: Request, res: Response) {
-    
     try {
       const errors = validationResult(req);
-      if (!errors.isEmpty()) 
-        return res.error(errors.array()[0].msg, 400);
+      if (!errors.isEmpty()) return res.error(errors.array()[0].msg, 400);
 
       const user = req.user;
-      if (!user) 
-        return res.error("Authentification requise", 401);
+      if (!user) return res.error("Authentification requise", 401);
 
       const entrepriseId = req.params.id;
       const entreprise = await Entreprise.findById(entrepriseId);
-      if (!entreprise) 
-        return res.error("Entreprise non trouvée", 404);
+      if (!entreprise) return res.error("Entreprise non trouvée", 404);
 
       const isOwner = entreprise.creatorId.toString() === user.userId;
-      if (!isOwner && user.role !== "admin") 
+      if (!isOwner && user.role !== "admin")
         return res.error("Accès non autorisé", 403);
 
       const allowed = ["name", "description", "phone", "address"];
@@ -104,11 +93,19 @@ class EntrepriseController {
         if (req.body[key] !== undefined) updates[key] = req.body[key];
       }
 
-      if (Object.keys(updates).length === 0) 
+      if (Object.keys(updates).length === 0)
         return res.error("Aucun champ à mettre à jour", 400);
 
-      const updated = await Entreprise.findByIdAndUpdate(entrepriseId, updates, { new: true });
-      return res.success({ entreprise: updated }, "Entreprise mise à jour", 200);
+      const updated = await Entreprise.findByIdAndUpdate(
+        entrepriseId,
+        updates,
+        { new: true }
+      );
+      return res.success(
+        { entreprise: updated },
+        "Entreprise mise à jour",
+        200
+      );
     } catch (err) {
       console.error("Erreur mise à jour entreprise:", err);
       return res.error("Impossible de mettre à jour l'entreprise", 500, err);
@@ -116,7 +113,6 @@ class EntrepriseController {
   }
 
   static async remove(req: Request, res: Response) {
-    
     try {
       const user = req.user;
       if (!user) return res.error("Authentification requise", 401);
@@ -126,7 +122,8 @@ class EntrepriseController {
       if (!entreprise) return res.error("Entreprise non trouvée", 404);
 
       const isOwner = entreprise.creatorId.toString() === user.userId;
-      if (!isOwner && user.role !== "admin") return res.error("Accès non autorisé", 403);
+      if (!isOwner && user.role !== "admin")
+        return res.error("Accès non autorisé", 403);
 
       await Entreprise.findByIdAndDelete(entrepriseId);
       return res.success(null, "Entreprise supprimée", 200);
@@ -135,7 +132,6 @@ class EntrepriseController {
       return res.error("Impossible de supprimer l'entreprise", 500, err);
     }
   }
-
 }
 
 export default EntrepriseController;

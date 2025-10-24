@@ -6,6 +6,7 @@ const router = express.Router();
 
 
 router.post("/", authenticate, EntrepriseController.createValidators, EntrepriseController.create);
+router.patch("/:id", authenticate, EntrepriseController.updateValidators, EntrepriseController.update);
 
 
 export default router;

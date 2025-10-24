@@ -42,7 +42,7 @@ class EntrepriseController {
       .optional()
       .isString()
       .withMessage("Numéro de téléphone invalide"),
-      
+
     body("address")
       .optional()
       .isString()
@@ -112,6 +112,27 @@ class EntrepriseController {
     } catch (err) {
       console.error("Erreur mise à jour entreprise:", err);
       return res.error("Impossible de mettre à jour l'entreprise", 500, err);
+    }
+  }
+
+  static async remove(req: Request, res: Response) {
+    
+    try {
+      const user = req.user;
+      if (!user) return res.error("Authentification requise", 401);
+
+      const entrepriseId = req.params.id;
+      const entreprise = await Entreprise.findById(entrepriseId);
+      if (!entreprise) return res.error("Entreprise non trouvée", 404);
+
+      const isOwner = entreprise.creatorId.toString() === user.userId;
+      if (!isOwner && user.role !== "admin") return res.error("Accès non autorisé", 403);
+
+      await Entreprise.findByIdAndDelete(entrepriseId);
+      return res.success(null, "Entreprise supprimée", 200);
+    } catch (err) {
+      console.error("Erreur suppression entreprise:", err);
+      return res.error("Impossible de supprimer l'entreprise", 500, err);
     }
   }
 

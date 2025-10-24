@@ -52,8 +52,17 @@ class EntrepriseController {
       .withMessage("Identifiant utilisateur invalide"),
 
     body("name").isString().withMessage("Nom invalide"),
+
     body("email").isEmail().withMessage("Email invalide"),
-    body("phone").isString().withMessage("Téléphone invalide"),
+
+    body("phone").optional().isString().withMessage("Téléphone invalide"),
+  ];
+
+  static updateEmployeeValidators = [
+    body("name").optional().isString().withMessage("Nom invalide"),
+    body("email").optional().isEmail().withMessage("Email invalide"),
+    body("phone").optional().isString().withMessage("Téléphone invalide"),
+    body("isActive").optional().isBoolean().withMessage("isActive invalide"),
   ];
 
   static async create(req: Request, res: Response) {
@@ -201,6 +210,55 @@ class EntrepriseController {
     } catch (err) {
       console.error("Erreur ajout employé:", err);
       return res.error("Impossible d'ajouter l'employé", 500, err);
+    }
+  }
+
+  static async updateEmployee(req: Request, res: Response) {
+    try {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) return res.error(errors.array()[0].msg, 400);
+
+      const user = req.user;
+      if (!user) return res.error("Authentification requise", 401);
+
+      const entrepriseId = req.params.id;
+      const entreprise = await Entreprise.findById(entrepriseId);
+      if (!entreprise) return res.error("Entreprise non trouvée", 404);
+
+      const employeeId = req.params.employeeId;
+      const employee = await EntrepriseEmploye.findById(employeeId);
+      if (!employee) return res.error("Employé non trouvé", 404);
+
+      // ensure the employee belongs to this entreprise
+      if (employee.entrepriseId.toString() !== entrepriseId)
+        return res.error("Cet employé n'appartient pas à l'entreprise", 400);
+
+      const isOwner = entreprise.creatorId.toString() === user.userId;
+      const isAdmin = user.role === "admin";
+      const isSelf = employee.userId.toString() === user.userId;
+
+      if (!isOwner && !isAdmin && !isSelf)
+        return res.error("Accès non autorisé", 403);
+
+      const allowed = ["name", "email", "phone", "isActive"];
+      const updates: any = {};
+      for (const key of allowed) {
+        if (req.body[key] !== undefined) updates[key] = req.body[key];
+      }
+
+      if (Object.keys(updates).length === 0)
+        return res.error("Aucun champ à mettre à jour", 400);
+
+      const updated = await EntrepriseEmploye.findByIdAndUpdate(
+        employeeId,
+        updates,
+        { new: true }
+      );
+
+      return res.success({ employee: updated }, "Employé mis à jour", 200);
+    } catch (err) {
+      console.error("Erreur mise à jour employé:", err);
+      return res.error("Impossible de mettre à jour l'employé", 500, err);
     }
   }
 }

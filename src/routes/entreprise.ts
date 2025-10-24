@@ -9,6 +9,7 @@ router.post("/", authenticate, EntrepriseController.createValidators, Entreprise
 router.patch("/:id", authenticate, EntrepriseController.updateValidators, EntrepriseController.update);
 router.delete("/:id", authenticate, EntrepriseController.remove);
 router.post("/:id/employees", authenticate, EntrepriseController.addEmployeeValidators, EntrepriseController.addEmployee);
+router.patch("/:id/employees/:employeeId", authenticate, EntrepriseController.updateEmployeeValidators, EntrepriseController.updateEmployee);
 	
 
 export default router;

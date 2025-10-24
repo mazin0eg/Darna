@@ -8,6 +8,7 @@ const router = express.Router();
 router.post("/", authenticate, EntrepriseController.createValidators, EntrepriseController.create);
 router.patch("/:id", authenticate, EntrepriseController.updateValidators, EntrepriseController.update);
 router.delete("/:id", authenticate, EntrepriseController.remove);
-
+router.post("/:id/employees", authenticate, EntrepriseController.addEmployeeValidators, EntrepriseController.addEmployee);
+	
 
 export default router;

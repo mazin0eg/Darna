@@ -1,6 +1,8 @@
 import type { Request, Response } from "express";
 import { body, validationResult } from "express-validator";
 import Entreprise from "../models/Entreprise";
+import EntrepriseEmploye from "../models/EntrepriseEmploye";
+import User from "../models/User";
 
 class EntrepriseController {
   static createValidators = [
@@ -40,6 +42,18 @@ class EntrepriseController {
       .withMessage("Numéro de téléphone invalide"),
 
     body("address").optional().isString().withMessage("Adresse invalide"),
+  ];
+
+  static addEmployeeValidators = [
+    body("userId")
+      .exists()
+      .withMessage("L'identifiant de l'utilisateur est requis")
+      .isMongoId()
+      .withMessage("Identifiant utilisateur invalide"),
+
+    body("name").isString().withMessage("Nom invalide"),
+    body("email").isEmail().withMessage("Email invalide"),
+    body("phone").isString().withMessage("Téléphone invalide"),
   ];
 
   static async create(req: Request, res: Response) {
@@ -130,6 +144,63 @@ class EntrepriseController {
     } catch (err) {
       console.error("Erreur suppression entreprise:", err);
       return res.error("Impossible de supprimer l'entreprise", 500, err);
+    }
+  }
+
+  static async addEmployee(req: Request, res: Response) {
+    try {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) return res.error(errors.array()[0].msg, 400);
+
+      const user = req.user;
+      if (!user) return res.error("Authentification requise", 401);
+
+      const entrepriseId = req.params.id;
+      const entreprise = await Entreprise.findById(entrepriseId);
+      if (!entreprise) return res.error("Entreprise non trouvée", 404);
+
+      const isOwner = entreprise.creatorId.toString() === user.userId;
+      if (!isOwner && user.role !== "admin")
+        return res.error("Accès non autorisé", 403);
+
+      const { userId } = req.body as { userId: string };
+
+      const targetUser = await User.findById(userId);
+      if (!targetUser) return res.error("Utilisateur non trouvé", 404);
+
+      const nameFromBody = req.body.name;
+      const emailFromBody = req.body.email;
+      const phoneFromBody = req.body.phone;
+
+      const name =
+        nameFromBody ||
+        [targetUser.firstName, targetUser.lastName].filter(Boolean).join(" ") ||
+        targetUser.username;
+      const email = emailFromBody || targetUser.email;
+      const phone = phoneFromBody || (targetUser as any).phone_number;
+
+      const doc = new EntrepriseEmploye({
+        entrepriseId,
+        userId,
+        role: "employé",
+        name,
+        email,
+        phone,
+      });
+
+      try {
+        await doc.save();
+      } catch (err: any) {
+        if (err && err.code === 11000) {
+          return res.error("Cet employé est déjà affecté à l'entreprise", 409);
+        }
+        throw err;
+      }
+
+      return res.success({ employee: doc }, "Employé ajouté", 201);
+    } catch (err) {
+      console.error("Erreur ajout employé:", err);
+      return res.error("Impossible d'ajouter l'employé", 500, err);
     }
   }
 }

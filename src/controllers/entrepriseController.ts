@@ -4,6 +4,7 @@ import bcryptjs from "bcryptjs";
 import Entreprise from "../models/Entreprise";
 import EntrepriseEmploye from "../models/EntrepriseEmploye";
 import User from "../models/User";
+import makeSlugFrom from "../utils/slug";
 
 class EntrepriseController {
   static async getEntreprises(req: Request, res: Response) {
@@ -75,6 +76,8 @@ class EntrepriseController {
     try {
       const user = req.user;
       const { name, description, phone, address } = req.body;
+      // const slug = makeSlugFrom(name, "entreprise", true);
+      // console.log(slug);
       const entreprise = new Entreprise({
         name,
         description,

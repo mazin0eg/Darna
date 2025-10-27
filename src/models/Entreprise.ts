@@ -3,6 +3,10 @@ const { Schema } = mongoose;
 
 const EntrepriseSchema = new Schema(
   {
+    slug: {
+      type: String,
+      required: true,
+    },
     name: {
       type: String,
       required: true,
@@ -25,6 +29,11 @@ const EntrepriseSchema = new Schema(
       type: String,
       trim: true,
     },
+    status: {
+      type: String,
+      enum: ["active", "inactive", "pending"],
+      default: "pending",
+    }
   },
   { timestamps: true }
 );

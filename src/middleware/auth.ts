@@ -5,7 +5,7 @@ import { extractTokenFromHeader, verifyToken } from "../utils/jwt";
 declare global {
   namespace Express {
     interface Request {
-      user?: {
+      user: {
         userId: string;
         email: string;
         role: string;

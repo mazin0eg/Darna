@@ -5,7 +5,7 @@ const EntrepriseSchema = new Schema(
   {
     slug: {
       type: String,
-      required: true,
+      // required: true,
     },
     name: {
       type: String,

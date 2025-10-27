@@ -4,7 +4,6 @@ import bcryptjs from "bcryptjs";
 import Entreprise from "../models/Entreprise";
 import EntrepriseEmploye from "../models/EntrepriseEmploye";
 import User from "../models/User";
-import { encapsulate } from "crypto";
 
 class EntrepriseController {
   static async getEntreprises(req: Request, res: Response) {

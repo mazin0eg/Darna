@@ -6,35 +6,7 @@ import EntrepriseEmploye from "../models/EntrepriseEmploye";
 import User from "../models/User";
 
 class EntrepriseController {
-  static createValidators = [
-    body("name").exists().withMessage("Le nom est requis").isLength({ min: 2 }).withMessage("Le nom est trop court"),
-    body("description").optional().isLength({ max: 500 }).withMessage("La description est trop longue"),
-    body("phone").optional().isMobilePhone("any").withMessage("Numéro de téléphone invalide"),
-    body("address").optional().isString().withMessage("Adresse invalide"),
-  ];
-
-  static updateValidators = [
-    body("name").optional().isLength({ min: 2 }).withMessage("Le nom est trop court"),
-    body("description").optional().isLength({ max: 500 }).withMessage("La description est trop longue"),
-    body("phone").optional().isString().withMessage("Numéro de téléphone invalide"),
-    body("address").optional().isString().withMessage("Adresse invalide"),
-  ];
-
   
-  static addEmployeeValidators = [
-    body("userId").optional().isMongoId().withMessage("Identifiant utilisateur invalide"),
-    body("email").optional().isEmail().withMessage("Email invalide"),
-    body("name").optional().isString().withMessage("Nom invalide"),
-    body("phone").optional().isString().withMessage("Téléphone invalide"),
-  ];
-
-  static updateEmployeeValidators = [
-    body("name").optional().isString().withMessage("Nom invalide"),
-    body("email").optional().isEmail().withMessage("Email invalide"),
-    body("phone").optional().isString().withMessage("Téléphone invalide"),
-    body("isActive").optional().isBoolean().withMessage("isActive invalide"),
-  ];
-
   static async create(req: Request, res: Response) {
     try {
       const errors = validationResult(req);

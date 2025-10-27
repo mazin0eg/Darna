@@ -2,12 +2,9 @@ import "dotenv/config";
 import express from "express";
 import { connectDB } from "./config/dbconfig";
 import { responseHandler } from "./middleware/responseHandler";
-
 import { validatorHandler } from "./middleware/validatorHamdler";
 import authRoutes from "./routes/auth";
-
 import entrepriseRoutes from "./routes/entreprise";
-
 
 
 const app = express();

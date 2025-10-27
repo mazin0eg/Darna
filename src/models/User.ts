@@ -17,7 +17,10 @@ const userSchema = new Schema(
     },
     password: {
       type: String,
-      required: true,
+      required: function(this: any) {
+        // Password is required only if there's no OAuth provider
+        return !this.googleId;
+      },
     },
     firstName: {
       type: String,
@@ -35,6 +38,18 @@ const userSchema = new Schema(
       type: String,
       enum: ["particulier", "admin", "employé"],
       default: "particulier",
+    },
+    googleId: {
+      type: String,
+      unique: true,
+      sparse: true,
+    },
+    displayName: {
+      type: String,
+      trim: true,
+    },
+    picture: {
+      type: String,
     },
     isActive: {
       type: Boolean,

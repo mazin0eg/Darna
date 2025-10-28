@@ -5,6 +5,7 @@ import { responseHandler } from "./middleware/responseHandler";
 import { validatorHandler } from "./middleware/validatorHamdler";
 import authRoutes from "./routes/auth";
 import entrepriseRoutes from "./routes/entreprise";
+import propertyRoutes from "./routes/property";
 
 
 const app = express();
@@ -15,6 +16,7 @@ app.use(validatorHandler);
 
 app.use("/api/auth", authRoutes);
 app.use("/api/entreprises", entrepriseRoutes);
+app.use("/api/annonces", propertyRoutes);
 
 
 export default app;

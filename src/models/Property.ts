@@ -116,9 +116,7 @@ propertySchema.pre("validate", function (this: any, next: any) {
       const from = this.titre || "";
       this.slug = makeSlugFrom(from, "annonce", true);
     }
-  } catch (err) {
-   
-  }
+  } catch (err) {}
   next();
 });
 

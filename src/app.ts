@@ -16,4 +16,5 @@ app.use(validatorHandler);
 app.use("/api/auth", authRoutes);
 app.use("/api/entreprises", entrepriseRoutes);
 
+
 export default app;

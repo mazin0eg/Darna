@@ -1,0 +1,2 @@
+// removed: property routes — per request to keep only the Property model in the repository
+export {};

@@ -63,7 +63,63 @@ class PropertyController {
       return res.error("Impossible de créer l'annonce", 500, err);
     }
   }
+
+  static async update(req: Request, res: Response) {
+    try {
+      const user = req.user;
+      const annonceId = req.params.id;
+      const annonce = await Property.findById(annonceId);
+      if (!annonce) return res.error("Annonce non trouvée", 404);
+
+      const isOwner = annonce.creatorId && annonce.creatorId.toString() === user.userId;
+      const isAdmin = user.role === "admin";
+      let isEntrepriseMember = false;
+
+      if (!isOwner && user.role === "employé" && annonce.entrepriseId) {
+        const emp = await EntrepriseEmploye.findOne({
+          userId: user.userId,
+          entrepriseId: annonce.entrepriseId,
+          isActive: true,
+        });
+        if (emp) isEntrepriseMember = true;
+      }
+
+      if (!isOwner && !isAdmin && !isEntrepriseMember)
+        return res.error("Accès non autorisé", 403);
+
+      const allowed = [
+        "titre",
+        "description",
+        "type_transaction",
+        "prix",
+        "prix_par_jour",
+        "disponibilites",
+        "localisation",
+        "caracteristiques",
+        "diagnostics_energetiques",
+        "medias",
+      ];
+
+      const updates: any = {};
+      for (const key of allowed) {
+        if (req.body[key] !== undefined) updates[key] = req.body[key];
+      }
+
+      if (Object.keys(updates).length === 0)
+        return res.error("Aucun champ à mettre à jour", 400);
+
+      const updated = await Property.findByIdAndUpdate(annonceId, updates, {
+        new: true,
+      });
+
+      return res.success({ annonce: updated }, "Annonce mise à jour", 200);
+    } catch (err: any) {
+      console.error("Erreur mise à jour annonce:", err);
+      return res.error("Impossible de mettre à jour l'annonce", 500, err);
+    }
+  }
 }
+
 
 export default PropertyController;
 

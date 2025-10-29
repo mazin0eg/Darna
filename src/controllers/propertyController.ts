@@ -118,6 +118,38 @@ class PropertyController {
       return res.error("Impossible de mettre à jour l'annonce", 500, err);
     }
   }
+
+  static async delete(req: Request, res: Response) {
+    try {
+      const user = req.user;
+      const annonceId = req.params.id;
+      const annonce = await Property.findById(annonceId);
+      if (!annonce) return res.error("Annonce non trouvée", 404);
+
+      const isOwner = annonce.creatorId && annonce.creatorId.toString() === user.userId;
+      const isAdmin = user.role === "admin";
+      let isEntrepriseMember = false;
+
+      if (!isOwner && user.role === "employé" && annonce.entrepriseId) {
+        const emp = await EntrepriseEmploye.findOne({
+          userId: user.userId,
+          entrepriseId: annonce.entrepriseId,
+          isActive: true,
+        });
+        if (emp) isEntrepriseMember = true;
+      }
+
+      if (!isOwner && !isAdmin && !isEntrepriseMember)
+        return res.error("Accès non autorisé", 403);
+
+      await Property.findByIdAndDelete(annonceId);
+
+      return res.success({}, "Annonce supprimée", 204);
+    } catch (err: any) {
+      console.error("Erreur suppression annonce:", err);
+      return res.error("Impossible de supprimer l'annonce", 500, err);
+    }
+  }
 }
 
 

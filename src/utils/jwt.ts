@@ -19,13 +19,31 @@ export const generateToken = (payload: JwtPayload) => {
 
 export const verifyToken = (token: string): JwtPayload => {
   try {
-    const decoded = jwt.verify(token, JWT_SECRET, {
-      issuer: "darna",
-      audience: "darna-users",
-    }) as JwtPayload;
+    const decoded = jwt.verify(token, JWT_SECRET) as JwtPayload;
     return decoded;
   } catch (error) {
     throw new Error(`Invalid token: ${error}`);
+  }
+};
+
+export const verifyAuthServiceToken = async (token: string): Promise<any> => {
+  try {
+    const authServiceUrl = process.env.AUTH_SERVICE || 'http://localhost:3001/api/v1/auth';
+    const response = await fetch(`${authServiceUrl}/verify`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      }
+    });
+    
+    if (!response.ok) {
+      throw new Error('Token verification failed');
+    }
+    
+    return await response.json();
+  } catch (error) {
+    throw new Error(`Auth service verification failed: ${error}`);
   }
 };
 

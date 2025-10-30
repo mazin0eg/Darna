@@ -4,10 +4,11 @@ const {Schema} = mongoose;
 
 const messageSchema = new Schema(
     {
-        senderID:{type : mongoose.Schema.Types.ObjectId , ref : "User" , require: true},
-        receiverId:{type : mongoose.Schema.Types.ObjectId , ref : "User" , require: true},
-        content : {type : String , require : true },
-        read :{type : Boolean , default : false}
+        senderID:{type : mongoose.Schema.Types.ObjectId , ref : "User" , required: true},
+        receiverId:{type : mongoose.Schema.Types.ObjectId , ref : "User" , required: true},
+        content : {type : String , required : true },
+        read :{type : Boolean , default : false},
+        readAt: {type : Date}
     },
     {timestamps : true}
 );

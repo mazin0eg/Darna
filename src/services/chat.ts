@@ -17,8 +17,8 @@ class Chatservice{
         try {
             return Message.find({
                 $or : [
-                    {senderID : userID1 , reciverID : userID2},
-                    {senderID : userID2 , reciverID : userID1}
+                    {senderID : userID1 , receiverId : userID2},
+                    {senderID : userID2 , receiverId : userID1}
                 ],
             }).sort({createdAt  : 1})
         } catch (error) {

@@ -8,7 +8,7 @@ const options = {
     info: {
       title: 'Darna Platform API',
       version: '1.0.0',
-      description: 'API documentation for Darna Platform - Chat and Enterprise Management System',
+      description: 'API documentation for Darna Platform - Chat and Enterprise Management System. Authentication is handled by external auth service at http://localhost:3001',
       contact: {
         name: 'API Support',
         email: 'support@darna.com'
@@ -17,7 +17,11 @@ const options = {
     servers: [
       {
         url: 'http://localhost:3000',
-        description: 'Development server'
+        description: 'Darna Platform - Chat & Enterprise Management'
+      },
+      {
+        url: 'http://localhost:3001',
+        description: 'Authentication Service - SSO & User Management'
       }
     ],
     components: {
@@ -33,9 +37,20 @@ const options = {
           type: 'object',
           properties: {
             _id: { type: 'string' },
+            username: { type: 'string' },
             email: { type: 'string', format: 'email' },
-            name: { type: 'string' },
-            role: { type: 'string', enum: ['particulier', 'admin', 'employé'] }
+            firstName: { type: 'string' },
+            lastName: { type: 'string' },
+            phone_number: { type: 'string' },
+            role: { type: 'string', enum: ['particulier', 'admin', 'employé'] },
+            googleId: { type: 'string' },
+            displayName: { type: 'string' },
+            picture: { type: 'string' },
+            isActive: { type: 'boolean' },
+            email_verified: { type: 'boolean' },
+            last_login_at: { type: 'string', format: 'date-time' },
+            createdAt: { type: 'string', format: 'date-time' },
+            updatedAt: { type: 'string', format: 'date-time' }
           }
         },
         Message: {
@@ -86,7 +101,7 @@ const options = {
       }
     ]
   },
-  apis: ['./src/routes/*.ts', './src/controllers/*.ts']
+  apis: ['./src/routes/*.ts', './src/controllers/*.ts', './src/docs/*.ts']
 };
 
 const specs = swaggerJSDoc(options);

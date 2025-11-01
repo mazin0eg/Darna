@@ -1,5 +1,3 @@
-import { CLIENT_RENEG_LIMIT } from "tls";
-
 const makeSlugFrom = (from: string, signature: string, ifAddTimestampAndRandomString: boolean) => {
   const timestamp = Date.now();
   const randomString = Math.random().toString(36).substring(2, 8);

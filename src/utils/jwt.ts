@@ -19,7 +19,10 @@ export const generateToken = (payload: JwtPayload) => {
 
 export const verifyToken = (token: string): JwtPayload => {
   try {
-    const decoded = jwt.verify(token, JWT_SECRET) as JwtPayload;
+    const decoded = jwt.verify(token, JWT_SECRET, {
+      issuer: "darna",
+      audience: "darna-users",
+    }) as JwtPayload;
     return decoded;
   } catch (error) {
     throw new Error(`Invalid token: ${error}`);
